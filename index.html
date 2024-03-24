@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To-Do List with Reminders</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        background-color: #ccc; /* Grey background color */
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .task-list {
+        list-style-type: none;
+        padding: 0;
+    }
+    .task {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+    }
+    .task.completed {
+        text-decoration: line-through;
+        opacity: 0.5;
+    }
+    .task input[type="checkbox"] {
+        margin-right: 10px;
+    }
+    .task input[type="text"], .task input[type="datetime-local"] {
+        flex: 1;
+        margin-right: 10px;
+        border: none;
+        padding: 5px;
+        border-radius: 3px;
+    }
+    .task button {
+        background-color: #ff6347;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    .task button:hover {
+        background-color: #e74c3c;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <h2>To-Do List with Reminders</h2>
+        <form id="taskForm">
+            <input type="text" id="taskInput" placeholder="Add a new task...">
+            <input type="datetime-local" id="reminderInput">
+            <button type="submit">Add Task</button>
+        </form>
+        <ul class="task-list" id="taskList">
+        </ul>
+        <button onclick="deleteAllTasks()">Delete All Tasks</button>
+    </div>
+
+    <script>
+        const taskForm = document.getElementById('taskForm');
+        const taskInput = document.getElementById('taskInput');
+        const reminderInput = document.getElementById('reminderInput');
+        const taskList = document.getElementById('taskList');
+
+        taskForm.addEventListener('submit', addTask);
+
+        function addTask(event) {
+            event.preventDefault();
+            const taskText = taskInput.value.trim();
+            const reminderDateTime = reminderInput.value;
+            if (taskText !== '') {
+                const taskItem = document.createElement('li');
+                taskItem.className = 'task';
+                taskItem.innerHTML = `
+                    <input type="checkbox" onchange="toggleTaskCompletion(this)">
+                    <input type="text" value="${taskText}" readonly>
+                    <input type="datetime-local" value="${reminderDateTime}" readonly>
+                    <button onclick="editTask(this)">Edit</button>
+                    <button onclick="deleteTask(this)">Delete</button>
+                `;
+                taskList.appendChild(taskItem);
+                taskInput.value = '';
+                reminderInput.value = '';
+            }
+        }
+
+        function toggleTaskCompletion(checkbox) {
+            const task = checkbox.parentElement;
+            if (checkbox.checked) {
+                task.classList.add('completed');
+            } else {
+                task.classList.remove('completed');
+            }
+        }
+
+        function editTask(button) {
+            const task = button.parentElement;
+            const textInput = task.querySelector('input[type="text"]');
+            const reminderInput = task.querySelector('input[type="datetime-local"]');
+            textInput.readOnly = false;
+            reminderInput.readOnly = false;
+            textInput.focus();
+        }
+
+        function deleteTask(button) {
+            const task = button.parentElement;
+            task.remove();
+        }
+
+        function deleteAllTasks() {
+            taskList.innerHTML = '';
+        }
+    </script>
+</body>
+</html>
+
